@@ -2,9 +2,9 @@ name: Lint and Test
 
 on:
   push:
-    branches: [main]
+    branches: ["*"]  # Run on any branch
   pull_request:
-    branches: [main]
+    branches: ["*"]
 
 jobs:
   build:
@@ -12,9 +12,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22  # Updated Node version
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - run: npm install
       - run: npm run lint
